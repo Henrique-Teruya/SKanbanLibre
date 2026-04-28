@@ -6,6 +6,8 @@ import AccountLayout from '@main/layouts/account/AccountLayout.vue'
 import AdminLayout from '@main/layouts/admin/AdminLayout.vue'
 import { useAppSettingsStore } from '../stores/appSettings'
 import { getI18n } from '../i18n'
+import CustomizationPageView from '@main/views/admin/customizations/CustomizationPageView.vue'
+import { useCustomizationsStore } from '../stores/customizations'
 
 const routes = [
   {
@@ -591,8 +593,25 @@ const routes = [
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: () => {
-      return '/inboxes/assigned'
+    name: 'dynamic-customization',
+    component: CustomizationPageView,
+    beforeEnter: async (to, from, next) => {
+      const store = useCustomizationsStore()
+      if (store.customizations.length === 0) {
+        await store.fetchCustomizations()
+      }
+      
+      const exists = store.customizations.some(c => 
+        c.active && 
+        c.type === 'page' && 
+        (c.config?.route === to.path || c.config?.route === to.path.slice(0, -1))
+      )
+      
+      if (exists) {
+        next()
+      } else {
+        next('/inboxes/assigned')
+      }
     }
   }
 ]

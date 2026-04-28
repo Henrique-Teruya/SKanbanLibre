@@ -25,8 +25,9 @@ export const useCustomizationsStore = defineStore('customizations', () => {
       const response = await api.getCustomizations()
       _customizations.value = response?.data?.data || []
     } catch (error) {
-      _error.value = error
-      _customizations.value = []
+      // Fallback to localStorage
+      const local = localStorage.getItem('libredesk_customizations')
+      _customizations.value = local ? JSON.parse(local) : []
     } finally {
       _loading.value = false
     }
@@ -41,8 +42,16 @@ export const useCustomizationsStore = defineStore('customizations', () => {
       }
       return created
     } catch (error) {
-      _error.value = error
-      return null
+      // Fallback to localStorage
+      const newCustomization = {
+        id: Date.now().toString(),
+        ...data,
+        active: true,
+        createdAt: new Date().toISOString()
+      }
+      _customizations.value.push(newCustomization)
+      saveToLocal()
+      return newCustomization
     }
   }
 
@@ -58,7 +67,13 @@ export const useCustomizationsStore = defineStore('customizations', () => {
       }
       return updated
     } catch (error) {
-      _error.value = error
+      // Fallback to localStorage
+      const index = _customizations.value.findIndex(c => c.id === id)
+      if (index !== -1) {
+        _customizations.value[index] = { ..._customizations.value[index], ...data }
+        saveToLocal()
+        return _customizations.value[index]
+      }
       return null
     }
   }
@@ -69,9 +84,15 @@ export const useCustomizationsStore = defineStore('customizations', () => {
       _customizations.value = _customizations.value.filter(c => c.id !== id)
       return true
     } catch (error) {
-      _error.value = error
-      return false
+      // Fallback to localStorage
+      _customizations.value = _customizations.value.filter(c => c.id !== id)
+      saveToLocal()
+      return true
     }
+  }
+
+  function saveToLocal() {
+    localStorage.setItem('libredesk_customizations', JSON.stringify(_customizations.value))
   }
 
   async function toggleCustomization(id) {

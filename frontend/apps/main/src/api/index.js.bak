@@ -512,24 +512,6 @@ const markAllNotificationsAsRead = () => http.put('/api/v1/notifications/read-al
 const deleteNotification = (id) => http.delete(`/api/v1/notifications/${id}`)
 const deleteAllNotifications = () => http.delete('/api/v1/notifications')
 
-// Customizations
-const getCustomizations = () => http.get('/api/v1/customizations')
-const getCustomization = (id) => http.get(`/api/v1/customizations/${id}`)
-const createCustomization = (data) =>
-  http.post('/api/v1/customizations', data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-const updateCustomization = (id, data) =>
-  http.put(`/api/v1/customizations/${id}`, data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-const deleteCustomization = (id) => http.delete(`/api/v1/customizations/${id}`)
-const toggleCustomization = (id) => http.put(`/api/v1/customizations/${id}/toggle`)
-
 export default {
   login,
   deleteUser,
@@ -701,11 +683,5 @@ export default {
   markAllNotificationsAsRead,
   deleteNotification,
   deleteAllNotifications,
-  getContactPageVisits,
-  getCustomizations,
-  getCustomization,
-  createCustomization,
-  updateCustomization,
-  deleteCustomization,
-  toggleCustomization
+  getContactPageVisits
 }
