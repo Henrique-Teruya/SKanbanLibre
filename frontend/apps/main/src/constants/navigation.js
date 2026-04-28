@@ -180,6 +180,13 @@ export const adminNavItems = [
         permission: 'context_links:manage',
         isTitleKeyPlural: true,
         icon: 'Link'
+      },
+      {
+        titleKey: 'globals.terms.customization',
+        href: '/admin/customizations',
+        permission: 'customizations:manage',
+        isTitleKeyPlural: true,
+        icon: 'Palette'
       }
     ]
   }

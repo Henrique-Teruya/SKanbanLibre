@@ -332,185 +332,23 @@ const sendMessage = (uuid, data) =>
 const getConversation = (uuid) => http.get(`/api/v1/conversations/${uuid}`)
 const getConversationParticipants = (uuid) => http.get(`/api/v1/conversations/${uuid}/participants`)
 const getContactPageVisits = (uuid) => http.get(`/api/v1/conversations/${uuid}/page-visits`)
-const getAllMacros = () => http.get('/api/v1/macros')
-const getMacro = (id) => http.get(`/api/v1/macros/${id}`)
-const createMacro = (data) =>
-  http.post('/api/v1/macros', data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-const updateMacro = (id, data) =>
-  http.put(`/api/v1/macros/${id}`, data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-const deleteMacro = (id) => http.delete(`/api/v1/macros/${id}`)
-const applyMacro = (uuid, id, data) =>
-  http.post(`/api/v1/conversations/${uuid}/macros/${id}/apply`, data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-const getTeamUnassignedConversations = (teamID, params) =>
-  http.get(`/api/v1/teams/${teamID}/conversations/unassigned`, { params })
-const getAssignedConversations = (params) => http.get('/api/v1/conversations/assigned', { params })
-const getUnassignedConversations = (params) =>
-  http.get('/api/v1/conversations/unassigned', { params })
-const getAllConversations = (params) => http.get('/api/v1/conversations/all', { params })
-const getMentionedConversations = (params) =>
-  http.get('/api/v1/conversations/mentioned', { params })
-const getViewConversations = (id, params) =>
-  http.get(`/api/v1/views/${id}/conversations`, { params })
-const uploadMedia = (data) =>
-  http.post('/api/v1/media', data, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
-const getOverviewCounts = () => http.get('/api/v1/reports/overview/counts')
-const getOverviewCharts = (params) => http.get('/api/v1/reports/overview/charts', { params })
-const getOverviewSLA = (params) => http.get('/api/v1/reports/overview/sla', { params })
-const getOverviewCSAT = (params) => http.get('/api/v1/reports/overview/csat', { params })
-const getOverviewMessageVolume = (params) => http.get('/api/v1/reports/overview/messages', { params })
-const getOverviewTagDistribution = (params) => http.get('/api/v1/reports/overview/tags', { params })
-const getLanguage = (lang) => http.get(`/api/v1/lang/${lang}`)
-const getAvailableLanguages = () => http.get('/api/v1/lang')
-const createInbox = (data) =>
-  http.post('/api/v1/inboxes', data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-const getInboxes = () => http.get('/api/v1/inboxes')
-const getInbox = (id) => http.get(`/api/v1/inboxes/${id}`)
-const toggleInbox = (id) => http.put(`/api/v1/inboxes/${id}/toggle`)
-const updateInbox = (id, data) =>
-  http.put(`/api/v1/inboxes/${id}`, data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-const deleteInbox = (id) => http.delete(`/api/v1/inboxes/${id}`)
-const saveDraft = (uuid, data) =>
-  http.post(`/api/v1/conversations/${uuid}/draft`, data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
 
-const getAllDrafts = () => http.get('/api/v1/drafts')
-
-const deleteDraft = (uuid) => http.delete(`/api/v1/conversations/${uuid}/draft`)
-const getCurrentUserViews = () => http.get('/api/v1/views/me')
-const createView = (data) =>
-  http.post('/api/v1/views/me', data, {
+const getCustomizations = () => http.get('/api/v1/customizations')
+const getCustomization = (id) => http.get(`/api/v1/customizations/${id}`)
+const createCustomization = (data) =>
+  http.post('/api/v1/customizations', data, {
     headers: {
       'Content-Type': 'application/json'
     }
   })
-const updateView = (id, data) =>
-  http.put(`/api/v1/views/me/${id}`, data, {
+const updateCustomization = (id, data) =>
+  http.put(`/api/v1/customizations/${id}`, data, {
     headers: {
       'Content-Type': 'application/json'
     }
   })
-const deleteView = (id) => http.delete(`/api/v1/views/me/${id}`)
-
-const getSharedViews = () => http.get('/api/v1/views/shared')
-const getAllSharedViews = () => http.get('/api/v1/shared-views')
-const getSharedView = (id) => http.get(`/api/v1/shared-views/${id}`)
-const createSharedView = (data) =>
-  http.post('/api/v1/shared-views', data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-const updateSharedView = (id, data) =>
-  http.put(`/api/v1/shared-views/${id}`, data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-const deleteSharedView = (id) => http.delete(`/api/v1/shared-views/${id}`)
-
-const getAiPrompts = () => http.get('/api/v1/ai/prompts')
-const aiCompletion = (data) => http.post('/api/v1/ai/completion', data, {
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
-const updateAIProvider = (data) => http.put('/api/v1/ai/provider', data, {
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
-const getContactNotes = (id) => http.get(`/api/v1/contacts/${id}/notes`)
-const createContactNote = (id, data) => http.post(`/api/v1/contacts/${id}/notes`, data, {
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
-const deleteContactNote = (id, noteId) => http.delete(`/api/v1/contacts/${id}/notes/${noteId}`)
-const getActivityLogs = (params) => http.get('/api/v1/activity-logs', { params })
-const getWebhooks = () => http.get('/api/v1/webhooks')
-const getWebhook = (id) => http.get(`/api/v1/webhooks/${id}`)
-const createWebhook = (data) =>
-  http.post('/api/v1/webhooks', data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-const updateWebhook = (id, data) =>
-  http.put(`/api/v1/webhooks/${id}`, data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-const deleteWebhook = (id) => http.delete(`/api/v1/webhooks/${id}`)
-const toggleWebhook = (id) => http.put(`/api/v1/webhooks/${id}/toggle`)
-const testWebhook = (id) => http.post(`/api/v1/webhooks/${id}/test`)
-
-const getContextLinks = () => http.get('/api/v1/context-links')
-const getContextLink = (id) => http.get(`/api/v1/context-links/${id}`)
-const createContextLink = (data) =>
-  http.post('/api/v1/context-links', data, {
-    headers: { 'Content-Type': 'application/json' }
-  })
-const updateContextLink = (id, data) =>
-  http.put(`/api/v1/context-links/${id}`, data, {
-    headers: { 'Content-Type': 'application/json' }
-  })
-const deleteContextLink = (id) => http.delete(`/api/v1/context-links/${id}`)
-const toggleContextLink = (id) => http.put(`/api/v1/context-links/${id}/toggle`)
-const getActiveContextLinks = () => http.get('/api/v1/context-links/active')
-const getContextLinkURL = (id, conversationUUID) =>
-  http.get(`/api/v1/context-links/${id}/url`, { params: { conversation_uuid: conversationUUID } })
-
-const generateAPIKey = (id) => 
-  http.post(`/api/v1/agents/${id}/api-key`, {}, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-
-const revokeAPIKey = (id) => http.delete(`/api/v1/agents/${id}/api-key`)
-
-const initiateOAuthFlow = (provider, data) =>
-  http.post(`/api/v1/inboxes/oauth/${provider}/authorize`, data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-
-// User notifications (in-app)
-const getNotifications = (params) => http.get('/api/v1/notifications', { params })
-const getNotificationStats = () => http.get('/api/v1/notifications/stats')
-const markNotificationAsRead = (id) => http.put(`/api/v1/notifications/${id}/read`)
-const markAllNotificationsAsRead = () => http.put('/api/v1/notifications/read-all')
-const deleteNotification = (id) => http.delete(`/api/v1/notifications/${id}`)
-const deleteAllNotifications = () => http.delete('/api/v1/notifications')
+const deleteCustomization = (id) => http.delete(`/api/v1/customizations/${id}`)
+const toggleCustomization = (id) => http.put(`/api/v1/customizations/${id}/toggle`)
 
 export default {
   login,
@@ -683,5 +521,11 @@ export default {
   markAllNotificationsAsRead,
   deleteNotification,
   deleteAllNotifications,
-  getContactPageVisits
+  getContactPageVisits,
+  getCustomizations,
+  getCustomization,
+  createCustomization,
+  updateCustomization,
+  deleteCustomization,
+  toggleCustomization
 }

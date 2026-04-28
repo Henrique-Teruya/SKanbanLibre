@@ -559,6 +559,31 @@ const routes = [
                 ]
               }
             ]
+          },
+          {
+            path: 'customizations',
+            component: () => import('@main/views/admin/customizations/Customizations.vue'),
+            meta: { titleKey: 'globals.terms.customization', titleCount: 2 },
+            children: [
+              {
+                path: '',
+                name: 'customization-list',
+                component: () => import('@main/views/admin/customizations/CustomizationList.vue')
+              },
+              {
+                path: 'new',
+                name: 'new-customization',
+                component: () => import('@main/views/admin/customizations/CreateCustomization.vue'),
+                meta: { titleKey: 'customization.new' }
+              },
+              {
+                path: ':id/edit',
+                props: true,
+                name: 'edit-customization',
+                component: () => import('@main/views/admin/customizations/EditCustomization.vue'),
+                meta: { titleKey: 'customization.edit' }
+              }
+            ]
           }
         ]
       }
