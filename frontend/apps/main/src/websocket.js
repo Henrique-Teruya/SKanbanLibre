@@ -1,7 +1,6 @@
-import { useConversationStore } from './stores/conversation'
-import { useNotificationStore } from './stores/notification'
 import { WS_EVENT, WS_EPHEMERAL_TYPES } from './constants/websocket'
 import { playNotificationSound } from '@shared-ui/composables/useNotificationSound'
+import { EMITTER_EVENTS } from './constants/emitterEvents'
 
 export class WebSocketClient {
   constructor() {
@@ -14,15 +13,19 @@ export class WebSocketClient {
     this.manualClose = false
     this.pingInterval = null
     this.lastPong = Date.now()
-    this.convStore = useConversationStore()
-    this.notificationStore = useNotificationStore()
+    this.convStore = null
+    this.notificationStore = null
+    this.emitter = null
     this.messageQueue = []
     this.maxQueueSize = 50
     // 30 sec.
     this.queueTimeoutMs = 30000
   }
 
-  init () {
+  init (emitter, conversationStore, notificationStore) {
+    this.emitter = emitter
+    this.convStore = conversationStore
+    this.notificationStore = notificationStore
     this.connect()
     this.setupNetworkListeners()
   }
@@ -79,10 +82,17 @@ export class WebSocketClient {
 
           this.convStore.refreshConversationList()
           this.convStore.updateConversationMessage(data.data)
+          this.emitter?.emit(EMITTER_EVENTS.REFRESH_LIST, { model: 'conversations' })
         },
         // Property updates for conversation and message.
-        [WS_EVENT.MESSAGE_UPDATE]: () => this.convStore.mergeMessageUpdate(data.data),
-        [WS_EVENT.CONVERSATION_UPDATE]: () => this.convStore.mergeConversationUpdate(data.data),
+        [WS_EVENT.MESSAGE_UPDATE]: () => {
+          this.convStore.mergeMessageUpdate(data.data)
+          this.emitter?.emit(EMITTER_EVENTS.REFRESH_LIST, { model: 'conversations' })
+        },
+        [WS_EVENT.CONVERSATION_UPDATE]: () => {
+          this.convStore.mergeConversationUpdate(data.data)
+          this.emitter?.emit(EMITTER_EVENTS.REFRESH_LIST, { model: 'conversations' })
+        },
         [WS_EVENT.CONTACT_UPDATE]: () => this.convStore.mergeContactUpdate(data.data),
         [WS_EVENT.CONVERSATION_SUBSCRIBED]: () => { },
         [WS_EVENT.TYPING]: () => {
@@ -269,10 +279,10 @@ export class WebSocketClient {
 
 let wsClient
 
-export function initWS () {
+export function initWS (emitter, conversationStore, notificationStore) {
   if (!wsClient) {
     wsClient = new WebSocketClient()
-    wsClient.init()
+    wsClient.init(emitter, conversationStore, notificationStore)
   }
   return wsClient
 }

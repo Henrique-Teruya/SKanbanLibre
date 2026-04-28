@@ -51,6 +51,20 @@
                     </TooltipContent>
                   </Tooltip>
                 </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <Tooltip>
+                    <TooltipTrigger as-child>
+                      <SidebarMenuButton asChild :isActive="route.path.startsWith('/skanban')">
+                        <router-link :to="{ name: 'skanban' }">
+                          <LayoutDashboard />
+                        </router-link>
+                      </SidebarMenuButton>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>SKanban</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </SidebarMenuItem>
                 <SidebarMenuItem v-if="userStore.hasAdminTabPermissions">
                   <Tooltip>
                     <TooltipTrigger as-child>
@@ -155,7 +169,7 @@ import { toast as sooner } from 'vue-sonner'
 import Sidebar from '@main/components/sidebar/Sidebar.vue'
 import Command from '@/features/command/CommandBox.vue'
 import CreateConversation from '@/features/conversation/CreateConversation.vue'
-import { Inbox, Shield, FileLineChart, BookUser } from 'lucide-vue-next'
+import { Inbox, Shield, FileLineChart, BookUser, LayoutDashboard } from 'lucide-vue-next'
 import SmallScreenOverlay from '@/components/SmallScreenOverlay.vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -219,7 +233,7 @@ watch([() => notificationStore.unreadCount, () => route.fullPath], ([count]) => 
   document.title = count > 0 ? `(${count}) ${base}` : base
 })
 
-initWS()
+// initWS(emitter, conversationStore, notificationStore)
 useIdleDetection()
 
 // Unlock audio on first user interaction (browser autoplay policy)
@@ -232,6 +246,7 @@ document.addEventListener('click', unlockAudio)
 document.addEventListener('touchstart', unlockAudio)
 
 onMounted(() => {
+  initWS(emitter, conversationStore, notificationStore)
   initToaster()
   listenViewRefresh()
   initStores()

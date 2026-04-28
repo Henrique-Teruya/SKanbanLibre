@@ -37,6 +37,12 @@ const routes = [
     component: App,
     children: [
       {
+        path: 'skanban',
+        name: 'skanban',
+        component: () => import('@main/features/skanban/SKanbanLayout.vue'),
+        meta: { titleKey: 'SKanban', hidePageHeader: true }
+      },
+      {
         path: 'contacts',
         name: 'contacts',
         component: () => import('@main/views/contact/ContactsView.vue'),
