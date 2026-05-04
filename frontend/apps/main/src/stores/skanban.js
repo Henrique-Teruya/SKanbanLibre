@@ -4,12 +4,12 @@ import api from '../api'
 import { handleHTTPError } from '@shared-ui/utils/http.js'
 import { useEmitter } from '../composables/useEmitter'
 import { EMITTER_EVENTS } from '../constants/emitterEvents'
+import { useConversationStore } from './conversation'
 
 export const useSKanbanStore = defineStore('skanban', () => {
   const emitterInstance = ref(null)
 
   // ── State ──
-  const activeView = ref('kanban')
   const filters = ref({})
   const conversations = ref([])
   const statuses = ref([])
@@ -17,11 +17,6 @@ export const useSKanbanStore = defineStore('skanban', () => {
   const drawerConversation = ref(null)
   const isDrawerOpen = ref(false)
   const searchQuery = ref('')
-  const dashboardStats = ref({
-    counts: {},
-    sla: {},
-    charts: { new_conversations: [], resolved_conversations: [] }
-  })
 
   // ── Getters ──
   const groupedByStatus = computed(() => {
@@ -42,13 +37,19 @@ export const useSKanbanStore = defineStore('skanban', () => {
   const filteredConversations = computed(() => {
     let result = [...conversations.value]
     if (filters.value.priority) {
-      result = result.filter((c) => c.priority === filters.value.priority)
+      result = result.filter((c) => {
+        const pId = c.priority_id || c.priority?.id || c.priority
+        return pId?.toString() === filters.value.priority.toString()
+      })
     }
     if (filters.value.channel) {
       result = result.filter((c) => c.inbox_channel === filters.value.channel)
     }
     if (filters.value.agent) {
       result = result.filter((c) => c.assigned_agent_id === parseInt(filters.value.agent))
+    }
+    if (filters.value.team) {
+      result = result.filter((c) => c.assigned_team_id === parseInt(filters.value.team))
     }
     if (searchQuery.value) {
       const q = searchQuery.value.toLowerCase()
@@ -74,10 +75,6 @@ export const useSKanbanStore = defineStore('skanban', () => {
   })
 
   // ── Actions ──
-  function setActiveView(view) {
-    activeView.value = view
-  }
-
   function setFilter(key, value) {
     if (value) {
       filters.value = { ...filters.value, [key]: value }
@@ -97,8 +94,14 @@ export const useSKanbanStore = defineStore('skanban', () => {
   }
 
   function openDrawer(conversation) {
+    const conversationStore = useConversationStore()
     drawerConversation.value = conversation
     isDrawerOpen.value = true
+    
+    if (conversation?.uuid) {
+      conversationStore.fetchConversation(conversation.uuid)
+      conversationStore.fetchMessages(conversation.uuid)
+    }
   }
 
   function closeDrawer() {
@@ -159,26 +162,6 @@ export const useSKanbanStore = defineStore('skanban', () => {
     }
   }
 
-  async function fetchDashboardStats() {
-    try {
-      const [counts, sla, charts] = await Promise.all([
-        api.getOverviewCounts(),
-        api.getOverviewSLA({ days: 30 }),
-        api.getOverviewCharts({ days: 30 })
-      ])
-      dashboardStats.value = {
-        counts: counts.data.data,
-        sla: sla.data.data,
-        charts: charts.data.data
-      }
-    } catch (error) {
-      emitterInstance.value?.emit(EMITTER_EVENTS.SHOW_TOAST, {
-        variant: 'destructive',
-        description: handleHTTPError(error).message
-      })
-    }
-  }
-
   let initialized = false
   async function init(emitter) {
     if (emitter) emitterInstance.value = emitter
@@ -198,7 +181,6 @@ export const useSKanbanStore = defineStore('skanban', () => {
   }
 
   return {
-    activeView,
     filters,
     conversations,
     statuses,
@@ -206,12 +188,10 @@ export const useSKanbanStore = defineStore('skanban', () => {
     drawerConversation,
     isDrawerOpen,
     searchQuery,
-    dashboardStats,
     groupedByStatus,
     openCount,
     filteredConversations,
     filteredGroupedByStatus,
-    setActiveView,
     setFilter,
     clearFilters,
     setSearchQuery,
@@ -219,7 +199,6 @@ export const useSKanbanStore = defineStore('skanban', () => {
     closeDrawer,
     fetchStatuses,
     fetchConversations,
-    fetchDashboardStats,
     moveCard,
     init
   }

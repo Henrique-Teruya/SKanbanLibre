@@ -19,10 +19,10 @@ function onInput(e) {
     </div>
     <div v-if="showSearch || showNewButton" class="sk-topbar-right">
       <div v-if="showSearch" class="sk-search-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0">
           <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
-        <input type="text" placeholder="Buscar conversa, contato..." @input="onInput" />
+        <input type="text" placeholder="Buscar protocolo, cliente..." @input="onInput" />
       </div>
       <button v-if="showNewButton" class="sk-btn sk-btn-primary sk-btn-sm" @click="emit('new-conversation')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

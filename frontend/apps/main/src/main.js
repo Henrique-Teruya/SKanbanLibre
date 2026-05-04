@@ -6,8 +6,14 @@ import router from './router'
 import mitt from 'mitt'
 import api from './api'
 import '@shared-ui/assets/styles/main.scss'
+import './assets/skanban-theme.css'
 import '@shared-ui/utils/string.js'
 import Root from './Root.vue'
+
+// Theme: always set explicit class on body (theme-libredesk or theme-skanban)
+const currentTheme = localStorage.getItem('theme') || 'libredesk'
+document.body.classList.add(`theme-${currentTheme}`)
+if (currentTheme === 'skanban') document.documentElement.classList.remove('dark')
 
 const setFavicon = (url) => {
   let link = document.createElement("link")

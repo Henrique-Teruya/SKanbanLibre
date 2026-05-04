@@ -12,10 +12,6 @@ const columns = computed(() => {
   return Object.values(grouped)
 })
 
-async function onDrop(uuid, newStatusName) {
-  await store.moveCard(uuid, newStatusName)
-}
-
 function onOpenDrawer(conversation) {
   store.openDrawer(conversation)
 }
@@ -33,7 +29,6 @@ onMounted(async () => {
       :status="col.status"
       :conversations="col.conversations"
       :index="i"
-      @drop="onDrop"
       @open-drawer="onOpenDrawer"
     />
     <div v-if="store.loading && columns.length === 0" class="sk-empty" style="flex:1">

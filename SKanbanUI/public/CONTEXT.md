@@ -52,7 +52,11 @@ Existem duas abordagens possíveis:
 > [!NOTE]
 > Dado o pedido do usuário para "adaptar esse front end", seguiremos fortalecendo a estrutura **Vanilla JS** atual, transformando-a em uma aplicação robusta que consome o backend do LibreDesk.
 
-## 4. Próximos Passos Imediatos
+## 4. Diretriz Principal de Implementação
+
+Nossa missão principal é **implementar o Kanban sem modificar o código original do LibreDesk na medida do possível**. As adaptações devem ser isoladas e contidas dentro do escopo da própria feature do SKanban, alterando configurações ou componentes globais apenas quando explicitamente necessário (como as adaptações de CSS global mal implementadas que afetaram o site todo). Isso garante que o ecossistema original do LibreDesk não seja quebrado pela introdução da nova visão Kanban.
+
+## 5. Próximos Passos Imediatos
 
 1.  **Refatorar `api.js`**: Mapear todos os métodos para os endpoints `/api/v1/` do LibreDesk.
 2.  **Implementar WebSocket**: Adicionar suporte a eventos em tempo real para evitar polling.

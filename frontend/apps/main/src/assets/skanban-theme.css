@@ -1,0 +1,339 @@
+/* ═══════════════════════════════════════════════════════════════
+   SKanban Theme — Isolated Visual Overlay for LibreDesk
+   ═══════════════════════════════════════════════════════════════
+   RULES:
+   1. ALL selectors MUST be scoped under .theme-skanban
+   2. Minimize !important — only when Tailwind inline wins
+   3. No wildcard selectors like [class*="btn"]
+   4. Removing this file = LibreDesk works 100% normally
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. CSS Custom Properties Override ── */
+.theme-skanban {
+  /* Brand */
+  --primary: 211 100% 44%;           /* #0071e3 — SKR Blue */
+  --primary-foreground: 0 0% 100%;   /* Pure white */
+
+  /* Surfaces */
+  --background: 0 0% 100%;           /* #ffffff */
+  --foreground: 240 6% 10%;          /* #1d1d1f — SKR Black */
+  --card: 240 20% 99%;               /* #fbfbfd — Warm white */
+  --card-foreground: 240 6% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 6% 10%;
+
+  /* Secondary */
+  --secondary: 240 5% 96%;
+  --secondary-foreground: 240 6% 10%;
+
+  /* Muted */
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 3% 54%;    /* #86868b */
+
+  /* Accent — Blue wash */
+  --accent: 211 100% 96%;
+  --accent-foreground: 211 100% 44%;
+
+  /* Destructive */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* System */
+  --border: 240 5% 92%;
+  --input: 240 5% 92%;
+  --ring: 211 100% 44%;              /* SKR Blue ring */
+  --radius: 0.75rem;                 /* More rounded */
+  --canvas: 240 10% 97%;             /* Warm gray canvas */
+
+  /* Sidebar */
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 240 6% 10%;
+  --sidebar-primary: 211 100% 44%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 211 100% 96%;
+  --sidebar-accent-foreground: 211 100% 44%;
+  --sidebar-border: 240 5% 94%;
+  --sidebar-ring: 211 100% 44%;
+}
+
+/* ── 2. Typography ── */
+.theme-skanban {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+.theme-skanban h1,
+.theme-skanban h2,
+.theme-skanban h3,
+.theme-skanban h4,
+.theme-skanban h5,
+.theme-skanban h6 {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* ── 3. App Shell & Layout ── */
+.theme-skanban .bg-canvas {
+  background-color: hsl(240 10% 97%) !important;
+}
+
+.theme-skanban .bg-background {
+  background-color: hsl(0 0% 100%) !important;
+}
+
+/* Main app container — softer padding */
+.theme-skanban .flex.w-full.h-screen {
+  gap: 0.125rem;
+}
+
+/* Content area rounded corners */
+.theme-skanban .flex.flex-col.h-full.rounded-lg {
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* ── 4. Icon Sidebar (Left Rail) ── */
+.theme-skanban [data-sidebar="sidebar"].border.rounded-lg {
+  background: hsl(0 0% 100%);
+  border-color: hsl(240 5% 94%);
+  border-radius: 1rem;
+}
+
+.theme-skanban [data-sidebar="sidebar"] button[data-active="true"] {
+  background: hsl(211 100% 96%);
+  color: hsl(211 100% 44%);
+}
+
+.theme-skanban [data-sidebar="sidebar"] button:hover {
+  background: hsl(240 5% 97%);
+}
+
+/* ── 5. Main Sidebar ── */
+.theme-skanban .sidebar-secondary {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right-color: hsl(240 5% 94%);
+}
+
+/* Sidebar group labels */
+.theme-skanban .sidebar-label {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(240 3% 68%);
+}
+
+/* Sidebar nav items */
+.theme-skanban .sidebar-secondary button:hover,
+.theme-skanban .sidebar-secondary a:hover {
+  background: hsl(240 5% 97%);
+}
+
+.theme-skanban .sidebar-secondary button[data-active="true"],
+.theme-skanban .sidebar-secondary a[data-active="true"] {
+  background: hsl(211 100% 96%);
+  color: hsl(211 100% 44%);
+}
+
+/* ── 6. Page Header ── */
+.theme-skanban .border-b {
+  border-bottom-color: hsl(240 5% 94%);
+}
+
+/* ── 7. Buttons ── */
+
+/* Primary buttons — pill shape */
+.theme-skanban .bg-primary {
+  background: hsl(211 100% 44%) !important;
+  color: white !important;
+  border-radius: 980px;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-skanban .bg-primary:hover {
+  background: hsl(211 100% 48%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 113, 227, 0.25);
+}
+
+/* Secondary buttons */
+.theme-skanban .bg-secondary {
+  border-radius: 980px;
+  transition: all 0.2s ease;
+}
+
+/* Ghost/subtle buttons */
+.theme-skanban .hover\:bg-accent:hover {
+  background: hsl(211 100% 96%) !important;
+}
+
+/* ── 8. Form Inputs ── */
+.theme-skanban input:not([type="checkbox"]):not([type="radio"]),
+.theme-skanban textarea,
+.theme-skanban select {
+  background-color: hsl(240 5% 98%);
+  border-color: hsl(240 5% 92%);
+  border-radius: 0.625rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.theme-skanban input:focus,
+.theme-skanban textarea:focus,
+.theme-skanban select:focus {
+  border-color: hsl(211 100% 44%);
+  box-shadow: 0 0 0 3px hsla(211, 100%, 44%, 0.1);
+  outline: none;
+}
+
+/* ── 9. Cards & Panels ── */
+.theme-skanban .border.shadow.rounded {
+  border-radius: 1rem;
+  border-color: hsl(240 5% 94%);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.theme-skanban .border.shadow.rounded:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.theme-skanban .bg-card {
+  background: hsl(240 20% 99%) !important;
+}
+
+/* ── 10. Dropdowns & Popovers ── */
+.theme-skanban [data-radix-popper-content-wrapper] > div {
+  border-radius: 1rem;
+  border-color: hsl(240 5% 92%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.theme-skanban [role="menuitem"] {
+  border-radius: 0.5rem;
+  transition: background 0.15s;
+}
+
+.theme-skanban [role="menuitem"]:hover {
+  background: hsl(211 100% 96%);
+}
+
+/* ── 11. Conversation List ── */
+.theme-skanban .flex.flex-col.overflow-y-auto > div:hover {
+  background: hsl(240 5% 98%);
+}
+
+/* ── 12. Message Bubbles ── */
+.theme-skanban .message-bubble {
+  border-radius: 1rem;
+  border-color: hsl(240 5% 94%);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+/* Outgoing messages — blue tint */
+.theme-skanban .message-bubble.bg-primary {
+  background: hsl(211 100% 44%) !important;
+  border-color: transparent;
+  border-radius: 1rem 1rem 0.25rem 1rem;
+}
+
+/* Incoming messages */
+.theme-skanban .message-bubble:not(.bg-primary) {
+  background: hsl(240 5% 98%);
+  border-radius: 1rem 1rem 1rem 0.25rem;
+}
+
+/* ── 13. Tables ── */
+.theme-skanban table thead th {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(240 3% 54%);
+  background: hsl(240 5% 98%);
+}
+
+.theme-skanban table tbody tr {
+  transition: background 0.15s;
+}
+
+.theme-skanban table tbody tr:hover {
+  background: hsl(240 5% 98%);
+}
+
+.theme-skanban table tbody tr:nth-child(even) {
+  background: hsl(240 5% 99%);
+}
+
+.theme-skanban table td,
+.theme-skanban table th {
+  border-color: hsl(240 5% 94%);
+}
+
+/* ── 14. Accordion ── */
+.theme-skanban .accordion-trigger {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: -0.01em;
+}
+
+/* ── 15. Scrollbars ── */
+.theme-skanban *::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.theme-skanban *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.theme-skanban *::-webkit-scrollbar-thumb {
+  background: hsl(240 5% 88%);
+  border-radius: 3px;
+}
+
+.theme-skanban *::-webkit-scrollbar-thumb:hover {
+  background: hsl(240 5% 75%);
+}
+
+/* ── 16. Micro-Animations ── */
+.theme-skanban button,
+.theme-skanban a {
+  transition: color 0.15s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Focus ring — SKR Blue */
+.theme-skanban *:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(0 0% 100%), 0 0 0 4px hsl(211 100% 44%);
+}
+
+/* ── 17. Dialog / Modal ── */
+.theme-skanban [role="dialog"] {
+  border-radius: 1.25rem;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.12);
+}
+
+/* ── 18. Switch Component ── */
+.theme-skanban button[role="switch"][data-state="checked"] {
+  background-color: hsl(211 100% 44%);
+}
+
+/* ── 19. Badge / Status Pills ── */
+.theme-skanban .rounded-full {
+  font-weight: 700;
+}
+
+/* ── 20. Tooltip ── */
+.theme-skanban [data-radix-tooltip-content] {
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}

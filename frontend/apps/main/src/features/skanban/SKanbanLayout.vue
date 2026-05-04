@@ -1,35 +1,30 @@
 <script setup>
-import { computed, ref } from 'vue'
-import { useSKanbanStore } from '@/stores/skanban'
-import { debounce } from './skanbanUtils'
-import CreateConversation from '@/features/conversation/CreateConversation.vue'
-import SKanbanSidebar from './SKanbanSidebar.vue'
+import { ref, onMounted } from 'vue'
 import SKanbanTopBar from './SKanbanTopBar.vue'
 import SKanbanFilterBar from './SKanbanFilterBar.vue'
 import KanbanBoard from './KanbanBoard.vue'
-import SKanbanDashboard from './SKanbanDashboard.vue'
 import SKanbanDrawer from './SKanbanDrawer.vue'
+import CreateConversation from '@/features/conversation/CreateConversation.vue'
+import { useSKanbanStore } from '@/stores/skanban'
+import { useEmitter } from '@/composables/useEmitter'
 import './skanban.css'
 
 const store = useSKanbanStore()
-const createConversationRef = ref(null)
+const emitter = useEmitter()
+const showFilters = ref(true)
+const showCreateModal = ref(false)
 
-const viewTitles = { kanban: 'Kanban', dashboard: 'Dashboard', conversas: 'Conversas' }
-const title = computed(() => viewTitles[store.activeView] || 'SKanban')
-const showFilters = computed(() => store.activeView === 'kanban')
-
-function navigate(view) {
-  store.setActiveView(view)
+const viewTitles = {
+  kanban: 'Kanban'
 }
 
-const onSearch = debounce((query) => {
+function onSearch(query) {
   store.setSearchQuery(query)
-}, 400)
+}
 
 function onFilterChange(filters) {
-  store.clearFilters()
-  Object.entries(filters).forEach(([key, value]) => {
-    store.setFilter(key, value)
+  Object.keys(filters).forEach((key) => {
+    store.setFilter(key, filters[key])
   })
 }
 
@@ -38,28 +33,29 @@ function onCloseDrawer() {
 }
 
 function openNewConversation() {
-  createConversationRef.value?.open()
+  showCreateModal.value = true
 }
+
+onMounted(() => {
+  store.init(emitter)
+})
 </script>
 
 <template>
-  <div class="skanban-root" style="height: 100%; width: 100%">
+  <div class="skanban-root" style="height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative;">
     <!-- Background blobs -->
-    <div class="sk-bg-blobs" />
+    <div class="sk-bg-blobs">
+      <div class="blob-extra"></div>
+    </div>
+    <div class="sk-bg-grid"></div>
 
     <!-- Layout -->
     <div class="sk-layout">
-      <SKanbanSidebar
-        :active-view="store.activeView"
-        :kanban-count="store.openCount"
-        @navigate="navigate"
-      />
-
       <div class="sk-main">
         <SKanbanTopBar
-          :title="title"
-          :show-search="store.activeView === 'kanban'"
-          :show-new-button="store.activeView === 'kanban'"
+          :title="viewTitles.kanban"
+          :show-search="true"
+          :show-new-button="true"
           @search="onSearch"
           @new-conversation="openNewConversation"
         />
@@ -70,13 +66,7 @@ function openNewConversation() {
         />
 
         <!-- Views -->
-        <KanbanBoard v-if="store.activeView === 'kanban'" />
-
-        <SKanbanDashboard v-else-if="store.activeView === 'dashboard'" />
-
-        <div v-else class="sk-empty" style="flex:1">
-          <p>Conversas — Em breve (Fase 3)</p>
-        </div>
+        <KanbanBoard />
       </div>
     </div>
 
@@ -87,7 +77,24 @@ function openNewConversation() {
       @close="onCloseDrawer"
     />
 
-    <!-- Create Conversation Modal -->
-    <CreateConversation ref="createConversationRef" />
+    <!-- Create Modal -->
+    <CreateConversation v-model="showCreateModal" v-if="showCreateModal" />
   </div>
 </template>
+
+<style scoped>
+.sk-fade-slide-enter-active,
+.sk-fade-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.sk-fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(0.625rem);
+}
+
+.sk-fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-0.625rem);
+}
+</style>

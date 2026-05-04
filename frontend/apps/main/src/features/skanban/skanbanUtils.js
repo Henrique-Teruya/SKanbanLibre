@@ -28,6 +28,14 @@ export function formatDateTime(dateStr) {
   })
 }
 
+export function formatTime(dateStr) {
+  if (!dateStr) return ''
+  return new Date(dateStr).toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
 export function getInitials(name) {
   if (!name) return '?'
   return name
