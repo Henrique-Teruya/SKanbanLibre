@@ -55,7 +55,14 @@ function onDragEnd(e) {
     <div class="sk-card-header">
       <div class="sk-card-title-group">
         <span class="sk-priority-dot" :class="priClass" :title="conversation.priority" />
-        <span class="sk-avatar-mini" :style="{ backgroundColor: avatarBg }">{{ initials }}</span>
+        <div class="relative">
+          <span class="sk-avatar-mini" :style="{ backgroundColor: avatarBg }">{{ initials }}</span>
+          <span 
+            v-if="conversation.unread_message_count > 0 && conversation.assigned_agent_id" 
+            class="sk-reply-dot"
+            title="Réplica do cliente"
+          />
+        </div>
         <div class="sk-card-title">{{ name }}</div>
       </div>
       <span class="sk-channel-icon" :title="chLabel" v-html="chIcon" />
@@ -113,7 +120,7 @@ function onDragEnd(e) {
 }
 .sk-sla-container {
   height: 0.25rem;
-  background: rgba(0,0,0,0.05);
+  background: hsl(var(--muted));
   border-radius: 0.125rem;
   overflow: hidden;
 }
@@ -128,4 +135,16 @@ function onDragEnd(e) {
 }
 .sk-sla-violated .sk-sla-bar-fill { background: #ff3b30; }
 .sk-sla-warning .sk-sla-bar-fill { background: #ff9f0a; }
+
+.sk-reply-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #0071e3;
+  border: 1.5px solid hsl(var(--card));
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(0, 113, 227, 0.4);
+}
 </style>

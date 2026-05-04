@@ -11,7 +11,7 @@ const store = useSKanbanStore()
 
 function onDrop(e) {
   const uuid = e.dataTransfer.getData('text/plain')
-  store.moveCard(uuid, props.status.name)
+  store.moveCard(uuid, props.status.id)
   e.currentTarget.classList.remove('drag-over')
 }
 

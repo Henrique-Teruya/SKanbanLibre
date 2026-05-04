@@ -19,6 +19,42 @@ export const useSKanbanStore = defineStore('skanban', () => {
   const searchQuery = ref('')
 
   // ── Getters ──
+  const boardColumns = computed(() => {
+    const colDefinitions = [
+      { id: 'novo', name: 'Novo Atendimento', color: '#0071e3' },
+      { id: 'em-atendimento', name: 'Em atendimento', color: '#34c759' },
+      { id: 'aguardando-interno', name: 'Aguardando retorno interno', color: '#ff9f0a' },
+      { id: 'retorno-disponivel', name: 'Retorno interno disponível', color: '#af52de' },
+      { id: 'finalizado', name: 'Finalizado', color: '#8e8e93' }
+    ]
+
+    const grouped = {}
+    colDefinitions.forEach(col => {
+      grouped[col.id] = { status: col, conversations: [] }
+    })
+
+    filteredConversations.value.forEach(c => {
+      const isClosed = ['Closed', 'Resolved'].includes(c.status)
+      const isAssigned = !!c.assigned_agent_id
+      const tags = c.tags || []
+      
+      if (isClosed) {
+        grouped['finalizado'].conversations.push(c)
+      } else if (tags.some(t => t.name.toLowerCase() === 'aguardando retorno')) {
+        grouped['aguardando-interno'].conversations.push(c)
+      } else if (tags.some(t => t.name.toLowerCase() === 'retorno disponível')) {
+        grouped['retorno-disponivel'].conversations.push(c)
+      } else if (isAssigned) {
+        grouped['em-atendimento'].conversations.push(c)
+      } else {
+        grouped['novo'].conversations.push(c)
+      }
+    })
+
+    return colDefinitions.map(def => grouped[def.id])
+  })
+
+  // Keep compatibility with other features if needed, but board should use boardColumns
   const groupedByStatus = computed(() => {
     const grouped = {}
     for (const status of statuses.value) {
@@ -63,16 +99,7 @@ export const useSKanbanStore = defineStore('skanban', () => {
     return result
   })
 
-  const filteredGroupedByStatus = computed(() => {
-    const grouped = {}
-    for (const status of statuses.value) {
-      grouped[status.id] = {
-        status,
-        conversations: filteredConversations.value.filter((c) => c.status === status.name)
-      }
-    }
-    return grouped
-  })
+  const filteredGroupedByStatus = boardColumns; // Alias for board compatibility
 
   // ── Actions ──
   function setFilter(key, value) {
@@ -142,19 +169,35 @@ export const useSKanbanStore = defineStore('skanban', () => {
     }
   }
 
-  async function moveCard(uuid, newStatusName) {
+  async function moveCard(uuid, newColumnId) {
     const conv = conversations.value.find((c) => c.uuid === uuid)
-    if (!conv || conv.status === newStatusName) return
-
-    const oldStatus = conv.status
-    // Optimistic update
-    conv.status = newStatusName
+    if (!conv) return
 
     try {
-      await api.updateConversationStatus(uuid, { status: newStatusName })
+      if (newColumnId === 'finalizado') {
+        await api.updateConversationStatus(uuid, { status: 'Closed' })
+        conv.status = 'Closed'
+      } else if (newColumnId === 'novo') {
+        await api.updateConversationStatus(uuid, { status: 'Open' })
+        await api.removeAssignee(uuid, 'agent')
+        conv.status = 'Open'
+        conv.assigned_agent_id = null
+      } else if (newColumnId === 'em-atendimento') {
+        await api.updateConversationStatus(uuid, { status: 'Open' })
+        conv.status = 'Open'
+        // If unassigned, it stays in "novo" logic unless we're forcing an assignment here. 
+        // For now just ensure it's Open.
+      } else if (newColumnId === 'aguardando-interno') {
+        const tags = [...(conv.tags || []).map(t => t.name), 'Aguardando Retorno']
+        await api.upsertTags(uuid, [...new Set(tags)])
+      } else if (newColumnId === 'retorno-disponivel') {
+        const tags = [...(conv.tags || []).map(t => t.name), 'Retorno Disponível']
+        await api.upsertTags(uuid, [...new Set(tags)])
+      }
+      
+      // Refresh to ensure everything is in sync
+      fetchConversations()
     } catch (error) {
-      // Rollback
-      conv.status = oldStatus
       emitterInstance.value?.emit(EMITTER_EVENTS.SHOW_TOAST, {
         variant: 'destructive',
         description: handleHTTPError(error).message

@@ -48,15 +48,6 @@
         </div>
 
         <div class="space-y-2">
-          <!-- Dark-mode toggle (hidden when SKanban theme is active) -->
-          <div v-if="!isSkanbanTheme" class="flex items-center justify-between text-sm">
-            <span class="text-muted-foreground">{{ t('navigation.darkMode') }}</span>
-            <Switch
-              :checked="mode === 'dark'"
-              @update:checked="(val) => (mode = val ? 'dark' : 'light')"
-            />
-          </div>
-
           <!-- SKanban theme toggle -->
           <div class="flex items-center justify-between text-sm">
             <span class="text-muted-foreground">Modo SKanban</span>
@@ -131,9 +122,6 @@ import { ChevronsUpDown, CircleUserRound, LogOut } from 'lucide-vue-next'
 import { useUserStore } from '../../stores/user'
 import { useRouter } from 'vue-router'
 
-import { useColorMode } from '@vueuse/core'
-
-const mode = useColorMode()
 const userStore = useUserStore()
 const router = useRouter()
 
@@ -147,10 +135,10 @@ const toggleSkanbanTheme = (val) => {
   if (val) {
     document.body.classList.add('theme-skanban')
     document.documentElement.classList.remove('dark')
-    mode.value = 'light'
     localStorage.setItem('theme', 'skanban')
   } else {
     document.body.classList.add('theme-libredesk')
+    document.documentElement.classList.add('dark')
     localStorage.setItem('theme', 'libredesk')
   }
 }

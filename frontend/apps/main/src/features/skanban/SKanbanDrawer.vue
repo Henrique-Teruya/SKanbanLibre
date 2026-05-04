@@ -444,7 +444,7 @@ watch(
 }
 
 .sk-detail-card {
-  background: white;
+  background: hsl(var(--card));
   padding: 1rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
@@ -468,7 +468,7 @@ watch(
 .sk-detail-icon {
   width: 2rem;
   height: 2rem;
-  background: #f4f4f7;
+  background: hsl(var(--muted));
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
@@ -535,14 +535,14 @@ watch(
   font-size: 0.875rem;
   font-weight: 800;
   border: 1px solid var(--border-subtle);
-  background: white;
+  background: hsl(var(--card));
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sk-action-btn:hover {
-  background: #fbfbfd;
+  background: hsl(var(--card));
   transform: translateY(-0.125rem);
   box-shadow: 0 8px 24px rgba(0,0,0,0.06);
 }
@@ -584,7 +584,7 @@ watch(
 }
 
 .sk-action-card {
-  background: #ffffff;
+  background: hsl(var(--card));
   padding: 1.25rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
@@ -601,7 +601,7 @@ watch(
 .sk-action-icon {
   width: 2.25rem;
   height: 2.25rem;
-  background: #f4f4f7;
+  background: hsl(var(--muted));
   border-radius: 0.75rem;
   display: flex;
   align-items: center;
@@ -628,14 +628,14 @@ watch(
 
 /* Ensure SelectComboBox and SelectTag look consistent */
 :deep(.select-trigger) {
-  background-color: #fbfbfd;
-  border: 1px solid rgba(0,0,0,0.04);
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   height: 2.5rem;
   border-radius: 0.5rem;
   font-weight: 600;
   font-size: 0.8125rem;
 }
 :deep(.select-trigger:hover) {
-  background-color: #f4f4f7;
+  background-color: hsl(var(--muted));
 }
 </style>

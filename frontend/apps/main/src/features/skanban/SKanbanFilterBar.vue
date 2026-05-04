@@ -124,7 +124,7 @@ const hasFilters = computed(() => Object.keys(activeFilters.value).length > 0)
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: #f4f4f7;
+  background: hsl(var(--muted));
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 600;
@@ -133,8 +133,8 @@ const hasFilters = computed(() => Object.keys(activeFilters.value).length > 0)
   transition: 0.2s;
   cursor: pointer;
 }
-.sk-filter-btn:hover { background: #e8e8ed; }
-.sk-filter-btn.active { background: #fff; border-color: var(--skr-blue); color: var(--skr-blue); }
+.sk-filter-btn:hover { background: hsl(var(--accent)); }
+.sk-filter-btn.active { background: hsl(var(--background)); border-color: var(--skr-blue); color: var(--skr-blue); }
 
 .sk-dropdown { position: relative; }
 .sk-dropdown-menu {
@@ -142,7 +142,7 @@ const hasFilters = computed(() => Object.keys(activeFilters.value).length > 0)
   top: calc(100% + 8px);
   left: 0;
   width: 200px;
-  background: #fff;
+  background: hsl(var(--card));
   border-radius: var(--radius-md);
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
   border: 1px solid var(--border-subtle);
@@ -157,8 +157,9 @@ const hasFilters = computed(() => Object.keys(activeFilters.value).length > 0)
   font-size: 13px;
   cursor: pointer;
   transition: 0.2s;
+  color: var(--text-primary);
 }
-.sk-dropdown-item:hover { background: #f4f4f7; }
+.sk-dropdown-item:hover { background: hsl(var(--muted)); }
 
 .sk-btn-clear {
   font-size: 12px;

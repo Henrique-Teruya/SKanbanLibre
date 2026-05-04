@@ -13,7 +13,13 @@ import Root from './Root.vue'
 // Theme: always set explicit class on body (theme-libredesk or theme-skanban)
 const currentTheme = localStorage.getItem('theme') || 'libredesk'
 document.body.classList.add(`theme-${currentTheme}`)
-if (currentTheme === 'skanban') document.documentElement.classList.remove('dark')
+
+// Toggle dark mode based on theme: libredesk = dark, skanban = light
+if (currentTheme === 'libredesk') {
+  document.documentElement.classList.add('dark')
+} else {
+  document.documentElement.classList.remove('dark')
+}
 
 const setFavicon = (url) => {
   let link = document.createElement("link")
