@@ -1,6 +1,8 @@
 <script setup>
+import { ref } from 'vue'
 import KanbanCard from './KanbanCard.vue'
 import { useSKanbanStore } from '@/stores/skanban'
+import { useAutoScroll } from '@/composables/useAutoScroll'
 
 const props = defineProps({
   status: { type: Object, required: true },
@@ -9,19 +11,32 @@ const props = defineProps({
 
 const store = useSKanbanStore()
 
+const cardsRef = ref(null)
+const { handleDragOver: scrollCards, stopAutoScroll } = useAutoScroll(cardsRef, { 
+  direction: 'vertical', 
+  threshold: 80,
+  speed: 12
+})
+
 function onDrop(e) {
   const uuid = e.dataTransfer.getData('text/plain')
   store.moveCard(uuid, props.status.id)
   e.currentTarget.classList.remove('drag-over')
+  stopAutoScroll()
 }
 
 function onDragOver(e) {
   e.preventDefault()
   e.currentTarget.classList.add('drag-over')
+  scrollCards(e)
 }
 
 function onDragLeave(e) {
-  e.currentTarget.classList.remove('drag-over')
+  // Only remove class and stop scroll if we are actually leaving the column
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    e.currentTarget.classList.remove('drag-over')
+    stopAutoScroll()
+  }
 }
 
 function onOpenDrawer(conv) {
@@ -33,18 +48,17 @@ function onOpenDrawer(conv) {
   <div
     class="sk-column"
     @dragover.prevent="onDragOver"
-    @dragleave.prevent="onDragLeave"
-    @drop.prevent="onDrop"
+    @dragleave="onDragLeave"
+    @drop="onDrop"
   >
     <div class="sk-column-header">
       <div class="sk-column-title">
-        <span class="dot" :style="{ background: status.color || 'var(--skr-blue)' }"></span>
         <h3>{{ status.name }}</h3>
       </div>
       <span class="sk-column-count">{{ conversations.length }}</span>
     </div>
 
-    <div class="sk-cards">
+    <div ref="cardsRef" class="sk-cards">
       <KanbanCard
         v-for="conv in conversations"
         :key="conv.uuid"

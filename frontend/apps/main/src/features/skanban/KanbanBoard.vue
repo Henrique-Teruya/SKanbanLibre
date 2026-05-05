@@ -1,11 +1,15 @@
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useSKanbanStore } from '@/stores/skanban'
 import { useEmitter } from '@/composables/useEmitter'
+import { useAutoScroll } from '@/composables/useAutoScroll'
 import KanbanColumn from './KanbanColumn.vue'
 
 const store = useSKanbanStore()
 const emitter = useEmitter()
+
+const boardRef = ref(null)
+const { handleDragOver, stopAutoScroll } = useAutoScroll(boardRef)
 
 const columns = computed(() => {
   const grouped = store.filteredGroupedByStatus
@@ -16,13 +20,26 @@ function onOpenDrawer(conversation) {
   store.openDrawer(conversation)
 }
 
+function onDragLeave(e) {
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    stopAutoScroll()
+  }
+}
+
 onMounted(async () => {
   await store.init(emitter)
 })
 </script>
 
 <template>
-  <section class="sk-board">
+  <section 
+    ref="boardRef"
+    class="sk-board"
+    @dragover="handleDragOver"
+    @drop="stopAutoScroll"
+    @dragend="stopAutoScroll"
+    @dragleave="onDragLeave"
+  >
     <KanbanColumn
       v-for="(col, i) in columns"
       :key="col.status.id"

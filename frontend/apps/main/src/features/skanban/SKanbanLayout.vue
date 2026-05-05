@@ -22,9 +22,11 @@ function onSearch(query) {
   store.setSearchQuery(query)
 }
 
-function onFilterChange(filters) {
-  Object.keys(filters).forEach((key) => {
-    store.setFilter(key, filters[key])
+function onFilterChange(newFilters) {
+  // Reset and apply new filters to ensure removed ones are cleared in the store
+  store.clearFilters()
+  Object.keys(newFilters).forEach((key) => {
+    store.setFilter(key, newFilters[key])
   })
 }
 

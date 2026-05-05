@@ -23,7 +23,7 @@ onMounted(() => {
   if (type.value) {
     // Set list status if not already set
     if (!conversationStore.getListStatus) {
-      conversationStore.setListStatus(CONVERSATION_DEFAULT_STATUSES.OPEN, false)
+      conversationStore.setListStatus('', false)
     }
     conversationStore.fetchConversationsList(true, type.value)
   }
@@ -31,7 +31,7 @@ onMounted(() => {
   if (teamID.value) {
     // Set list status if not already set
     if (!conversationStore.getListStatus) {
-      conversationStore.setListStatus(CONVERSATION_DEFAULT_STATUSES.OPEN, false)
+      conversationStore.setListStatus('', false)
     }
     conversationStore.fetchConversationsList(
       true,
@@ -54,14 +54,14 @@ watch(
     if (newType !== oldType && newType) {
       // Set list status if not already set
       if (!conversationStore.getListStatus) {
-        conversationStore.setListStatus(CONVERSATION_DEFAULT_STATUSES.OPEN, false)
+        conversationStore.setListStatus('', false)
       }
       conversationStore.fetchConversationsList(true, newType)
     }
     if (newTeamID !== oldTeamID && newTeamID) {
       // Set list status if not already set
       if (!conversationStore.getListStatus) {
-        conversationStore.setListStatus(CONVERSATION_DEFAULT_STATUSES.OPEN, false)
+        conversationStore.setListStatus('', false)
       }
       conversationStore.fetchConversationsList(
         true,

@@ -20,13 +20,36 @@ export const useSKanbanStore = defineStore('skanban', () => {
 
   // ── Getters ──
   const boardColumns = computed(() => {
-    const colDefinitions = [
-      { id: 'novo', name: 'Novo Atendimento', color: '#0071e3' },
-      { id: 'em-atendimento', name: 'Em atendimento', color: '#34c759' },
-      { id: 'aguardando-interno', name: 'Aguardando retorno interno', color: '#ff9f0a' },
-      { id: 'retorno-disponivel', name: 'Retorno interno disponível', color: '#af52de' },
-      { id: 'finalizado', name: 'Finalizado', color: '#8e8e93' }
-    ]
+    const standardStatuses = ['open', 'snoozed', 'resolved', 'closed']
+    
+    // Desired order priority
+    const getOrder = (name) => {
+      const n = name.toLowerCase()
+      if (n.includes('novo')) return 1
+      if (n.includes('em atendimento')) return 2
+      if (n.includes('aguardando')) return 3
+      if (n.includes('disponível') || n.includes('retorno')) return 4
+      if (n.includes('finalizado')) return 5
+      return 10
+    }
+
+    const colDefinitions = statuses.value && statuses.value.length > 0 
+      ? statuses.value
+          .filter(s => !standardStatuses.includes(s.name.toLowerCase()))
+          .map(s => ({
+            id: s.id,
+            name: s.name,
+            color: s.color || getStatusColor(s.name, s.category),
+            category: s.category
+          }))
+          .sort((a, b) => getOrder(a.name) - getOrder(b.name))
+      : [
+          { id: 'novo', name: 'Novo Atendimento', color: '#0071e3' },
+          { id: 'em-atendimento', name: 'Em atendimento', color: '#34c759' },
+          { id: 'aguardando-interno', name: 'Aguardando retorno interno', color: '#ff9f0a' },
+          { id: 'retorno-disponivel', name: 'Retorno interno disponível', color: '#af52de' },
+          { id: 'finalizado', name: 'Finalizado', color: '#8e8e93' }
+        ]
 
     const grouped = {}
     colDefinitions.forEach(col => {
@@ -34,25 +57,37 @@ export const useSKanbanStore = defineStore('skanban', () => {
     })
 
     filteredConversations.value.forEach(c => {
-      const isClosed = ['Closed', 'Resolved'].includes(c.status)
-      const isAssigned = !!c.assigned_agent_id
-      const tags = c.tags || []
+      // Find matching status by name
+      const matchingStatus = colDefinitions.find(s => s.name === c.status)
       
-      if (isClosed) {
-        grouped['finalizado'].conversations.push(c)
-      } else if (tags.some(t => t.name.toLowerCase() === 'aguardando retorno')) {
-        grouped['aguardando-interno'].conversations.push(c)
-      } else if (tags.some(t => t.name.toLowerCase() === 'retorno disponível')) {
-        grouped['retorno-disponivel'].conversations.push(c)
-      } else if (isAssigned) {
-        grouped['em-atendimento'].conversations.push(c)
+      if (matchingStatus) {
+        grouped[matchingStatus.id].conversations.push(c)
       } else {
-        grouped['novo'].conversations.push(c)
+        // Fallback: group by basic state if no exact name match
+        const isClosed = ['Closed', 'Resolved'].includes(c.status)
+        if (isClosed) {
+          const finalCol = colDefinitions.find(s => s.category === 'resolved' || s.name.toLowerCase().includes('finalizado'))
+          if (finalCol) grouped[finalCol.id].conversations.push(c)
+        } else {
+          const openCol = colDefinitions.find(s => s.category === 'open' || s.name.toLowerCase().includes('novo'))
+          if (openCol) grouped[openCol.id].conversations.push(c)
+          else if (colDefinitions.length > 0) grouped[colDefinitions[0].id].conversations.push(c)
+        }
       }
     })
 
     return colDefinitions.map(def => grouped[def.id])
   })
+
+  function getStatusColor(name, category) {
+    const n = name.toLowerCase()
+    if (n.includes('novo')) return '#0071e3'
+    if (n.includes('atendimento')) return '#34c759'
+    if (n.includes('aguardando')) return '#ff9f0a'
+    if (n.includes('disponível') || n.includes('retorno')) return '#af52de'
+    if (n.includes('finalizado') || category === 'resolved') return '#8e8e93'
+    return '#0071e3'
+  }
 
   // Keep compatibility with other features if needed, but board should use boardColumns
   const groupedByStatus = computed(() => {
@@ -173,29 +208,19 @@ export const useSKanbanStore = defineStore('skanban', () => {
     const conv = conversations.value.find((c) => c.uuid === uuid)
     if (!conv) return
 
+    const targetStatus = boardColumns.value.find(c => c.status.id.toString() === newColumnId.toString())?.status
+    if (!targetStatus) return
+
     try {
-      if (newColumnId === 'finalizado') {
-        await api.updateConversationStatus(uuid, { status: 'Closed' })
-        conv.status = 'Closed'
-      } else if (newColumnId === 'novo') {
-        await api.updateConversationStatus(uuid, { status: 'Open' })
+      await api.updateConversationStatus(uuid, { status: targetStatus.name })
+      conv.status = targetStatus.name
+
+      // Special logic: if moved to a "New" status, unassign the agent
+      if (targetStatus.name.toLowerCase().includes('novo')) {
         await api.removeAssignee(uuid, 'agent')
-        conv.status = 'Open'
         conv.assigned_agent_id = null
-      } else if (newColumnId === 'em-atendimento') {
-        await api.updateConversationStatus(uuid, { status: 'Open' })
-        conv.status = 'Open'
-        // If unassigned, it stays in "novo" logic unless we're forcing an assignment here. 
-        // For now just ensure it's Open.
-      } else if (newColumnId === 'aguardando-interno') {
-        const tags = [...(conv.tags || []).map(t => t.name), 'Aguardando Retorno']
-        await api.upsertTags(uuid, [...new Set(tags)])
-      } else if (newColumnId === 'retorno-disponivel') {
-        const tags = [...(conv.tags || []).map(t => t.name), 'Retorno Disponível']
-        await api.upsertTags(uuid, [...new Set(tags)])
       }
       
-      // Refresh to ensure everything is in sync
       fetchConversations()
     } catch (error) {
       emitterInstance.value?.emit(EMITTER_EVENTS.SHOW_TOAST, {
@@ -217,6 +242,9 @@ export const useSKanbanStore = defineStore('skanban', () => {
       emitterInstance.value?.on(EMITTER_EVENTS.REFRESH_LIST, (data) => {
         if (data?.model === 'conversations') {
           fetchConversations()
+        }
+        if (data?.model === 'status') {
+          fetchStatuses()
         }
       })
       initialized = true

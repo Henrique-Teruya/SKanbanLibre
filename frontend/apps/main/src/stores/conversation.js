@@ -30,15 +30,21 @@ export const useConversationStore = defineStore('conversation', () => {
     return priorities.value.map(p => ({ label: p.name, value: p.id }))
   })
   const statusOptions = computed(() => {
-    return statuses.value.map(s => ({ label: s.name, value: s.id }))
+    const standardStatuses = ['open', 'snoozed', 'resolved', 'closed']
+    return statuses.value
+      .filter(s => !standardStatuses.includes(s.name.toLowerCase()))
+      .map(s => ({ label: s.name, value: s.id }))
   })
-  // Status options excluding 'Snoozed'
-  const statusOptionsNoSnooze = computed(() =>
-    statuses.value.filter(s => s.name !== 'Snoozed').map(s => ({
-      label: s.name,
-      value: s.id
-    }))
-  )
+  // Status options excluding 'Snoozed' (keeping the same filtering logic)
+  const statusOptionsNoSnooze = computed(() => {
+    const standardStatuses = ['open', 'snoozed', 'resolved', 'closed']
+    return statuses.value
+      .filter(s => !standardStatuses.includes(s.name.toLowerCase()))
+      .map(s => ({
+        label: s.name,
+        value: s.id
+      }))
+  })
 
   // TODO: Move to constants.
   const sortFieldMap = {
@@ -94,7 +100,7 @@ export const useConversationStore = defineStore('conversation', () => {
   const conversations = reactive({
     data: [],
     listType: null,
-    status: 'Open',
+    status: '',
     sortField: 'newest',
     listFilters: [],
     viewID: 0,
