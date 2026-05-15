@@ -1,95 +1,141 @@
-<a href="https://zerodha.tech"><img src="https://zerodha.tech/static/images/github-badge.svg" align="right" alt="Zerodha Tech Badge" /></a>
+# 🚀 SKanban — Modern Omnichannel Support Desk
 
+SKanban is a high-performance, open-source, and self-hosted omnichannel customer support platform. It is built as a **non-destructive visual and operational overlay** on top of [LibreDesk](https://libredesk.io), transforming the user experience with a modern Kanban-oriented interface while preserving 100% of the original core stability.
 
-# libredesk
+![SKanban Banner](https://libredesk.io/hero-dark-v2.png?q=2)
 
-Modern, open source, self-hosted omnichannel customer support desk. Live chat, email, and more in a single binary.
+---
 
-![image](https://libredesk.io/hero-dark-v2.png?q=2)
+## 💡 Por que SKanban? (Resumo em Português)
 
+O **SKanban** foi desenvolvido para elevar a experiência do LibreDesk a um novo patamar de produtividade e estética. 
+- **Gestão Visual**: Introduzimos um Board Kanban completo para organizar atendimentos por status.
+- **Design Premium**: Implementamos o sistema de design **SKR Premium**, inspirado no minimalismo e elegância da Apple (glassmorphism, tipografia Montserrat e micro-animações).
+- **Sem Perda de Dados**: O SKanban funciona como uma "capa inteligente". Você pode alternar entre o visual clássico e o novo a qualquer momento, sem afetar as funcionalidades nativas do backend em Go.
 
-Visit [libredesk.io](https://libredesk.io) for more info. Check out the [**live demo**](https://demo.libredesk.io/).
+---
 
-## Features
+## 🌟 The SKanban Philosophy
 
-- **Omnichannel inbox**  
-  Live chat, email, and more — all in one inbox. Connect support@, billing@, sales@ and manage every conversation from a single, unified interface.
-- **Live chat widget**  
-  Embed a real-time chat widget on your website. Engage visitors instantly and handle live conversations right from your support desk.
-- **Granular permissions**  
-  Create custom roles with granular permissions for teams and individual agents.
-- **Automations**  
-  Eliminate repetitive tasks with powerful automation rules. Auto-tag, assign, and route conversations based on custom conditions.
-- **CSAT surveys**  
-  Measure customer satisfaction with automated surveys.
-- **Macros**  
-  Save frequently sent messages as templates. With one click, send saved responses, set tags, and more.
-- **Organization**  
-  Keep conversations organized with tags, custom statuses for conversations, and snoozing. Find any conversation instantly from the search bar.
-- **Auto assignment**  
-  Distribute workload with auto assignment rules. Auto-assign conversations based on agent capacity or custom criteria.
-- **SLA management**  
-  Set and track response time targets. Get notified when conversations are at risk of breaching SLA commitments.
-- **Custom attributes**  
-  Create custom attributes for contacts or conversations such as the subscription plan or the date of their first purchase. 
-- **AI-assist**  
-  Instantly rewrite responses with AI to make them more friendly, professional, or polished.
-- **Activity logs**  
-  Track all actions performed by agents and admins—updates and key events across the system—for auditing and accountability.
-- **Webhooks**  
-  Integrate with external systems using real-time HTTP notifications for conversation and message events.
-- **Command bar**  
-  Opens with a simple shortcut (CTRL+K) and lets you quickly perform actions on conversations.
+Unlike traditional forks that rewrite the codebase, SKanban operates as a **structural layer**:
+- **99% Core Preservation**: All original LibreDesk Go logic and Vue components remain intact.
+- **Visual Overlay**: Deep UI customization via scoped CSS (`.theme-skanban`) and **SKR Premium** design system.
+- **Operational Extensions**: New views like the **Board Kanban** are added as enhancements, not replacements.
+- **Dynamic Switching**: Users can toggle between the classic LibreDesk and the premium SKanban experience in real-time.
 
-And more — checkout [libredesk.io](https://libredesk.io) or try the [live demo](https://demo.libredesk.io/).
+---
 
+## ✨ Key Features
 
-## Installation
+### 📋 Board Kanban (Exclusive)
+A modern, drag-and-drop operational board to manage your conversations. Organize your workflow by status, priority, or custom stages.
 
-### Docker
+### 🎨 SKR Premium Design System
+- **Glassmorphism**: High-fidelity materials with backdrop blur.
+- **Dynamic Depth**: GPU-accelerated background blobs and smooth view transitions.
+- **Montserrat Typography**: Luxury-grade font hierarchy for better readability and brand identity.
 
-The latest image is available on DockerHub at [`libredesk/libredesk:latest`](https://hub.docker.com/r/libredesk/libredesk/tags?page=1&ordering=last_updated&name=latest)
+### 📥 Omnichannel Inbox
+Manage Live Chat, Email, WhatsApp, and more from a single, unified interface. Connect multiple support channels and handle everything in one place.
 
-```shell
-# Download the compose file and sample config file in the current directory.
-curl -LO https://github.com/abhinavxd/libredesk/raw/main/docker-compose.yml
-curl -LO https://github.com/abhinavxd/libredesk/raw/main/config.sample.toml
+### 🤖 Intelligent Automations
+- **Auto-Assignment**: Route conversations based on agent capacity or custom rules.
+- **Macros**: One-click responses for frequently asked questions.
+- **SLA Management**: Track response times and get alerts before breaches occur.
 
-# Copy the config.sample.toml to config.toml and edit it as needed.
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology |
+| :--- | :--- |
+| **Backend** | Go (Golang) |
+| **Frontend** | Vue 3 (Composition API), Pinia, Tailwind CSS |
+| **Design** | SKR Premium (Glassmorphism, Montserrat) |
+| **Database** | PostgreSQL |
+| **Cache / Queue** | Redis |
+| **Infrastructure** | Docker, Makefile, stuffbin |
+
+---
+
+## 🚀 Quick Start
+
+### Running with Docker
+
+The easiest way to get started is using Docker Compose:
+
+```bash
+# 1. Download the environment files
+curl -LO https://github.com/henrique/SKanbanLibre/raw/main/docker-compose.yml
+curl -LO https://github.com/henrique/SKanbanLibre/raw/main/config.sample.toml
+
+# 2. Setup configuration
 cp config.sample.toml config.toml
 
-# Run the services in the background.
+# 3. Start the services
 docker compose up -d
 
-# Setting System user password.
+# 4. Set your admin password
 docker exec -it libredesk_app ./libredesk --set-system-user-password
 ```
 
-Go to `http://localhost:9000` and login with username `System` and the password you set using the `--set-system-user-password` command.
+Visit `http://localhost:9000` and login with user `System`.
 
-See [installation docs](https://docs.libredesk.io/getting-started/installation)
+---
 
-__________________
+## 👨‍💻 Local Development
 
-### Binary
-- Download the [latest release](https://github.com/abhinavxd/libredesk/releases) and extract the libredesk binary.
-- Edit config.toml as needed.
-- `./libredesk --install` to setup the Postgres DB.
-- Run `./libredesk --set-system-user-password` to set the password for the System user.
-- Run `./libredesk` and visit `http://localhost:9000` and login with email `System` and the password you set using the --set-system-user-password command.
+### Prerequisites
+- [Go](https://golang.org/doc/install) 1.21+
+- [Node.js](https://nodejs.org/) & [pnpm](https://pnpm.io/)
+- [PostgreSQL](https://www.postgresql.org/) & [Redis](https://redis.io/)
 
-See [installation docs](https://docs.libredesk.io/getting-started/installation)
-__________________
+### Frontend Setup
+```bash
+cd frontend
+pnpm install
 
-## Developers
+# Run Main App (Port 8000)
+pnpm dev:main
 
-- If you are interested in contributing, **please read [CONTRIBUTING.md](./CONTRIBUTING.md) first**.
-- For local development and setup, refer to the [developer setup](https://docs.libredesk.io/contributing/developer-setup).
-- For planned features and project direction, see [ROADMAP.md](./ROADMAP.md).
+# Run Chat Widget (Port 8001)
+pnpm dev:widget
+```
 
-The backend is written in Go and the frontend is Vue.js 3 with Shadcn UI.
+### Backend Setup
+```bash
+# Run backend
+go run ./cmd/
+```
 
+### Makefile Commands
+| Command | Description |
+| :--- | :--- |
+| `make build` | Full production build (Frontend + Backend) |
+| `make run-frontend` | Start frontend dev server |
+| `make run-backend` | Start backend dev server |
+| `make test` | Run all tests (Go + Vue) |
 
+---
 
-## Translators
-You can help translate libredesk into your language on [Crowdin](https://crowdin.com/project/libredesk).  
+## 🗺️ Roadmap & Design
+
+- 📈 [Check our Roadmap](./ROADMAP.md) for planned features and history.
+- 🎨 [Explore Design Principles](./DESIGN.md) behind the SKanban interface.
+- 🤝 [Read Contributing Guide](./CONTRIBUTING.md) to join the project.
+
+---
+
+## 🌍 Supported Languages
+SKanban currently supports: English, Portuguese, German, French, Spanish, Persian, Italian, Japanese, and Marathi. Help us translate on [Crowdin](https://crowdin.com/project/libredesk).
+
+---
+
+## 📄 License
+SKanban is licensed under the [AGPL-3.0 License](./LICENSE). Based on the original LibreDesk project.
+
+---
+
+<p align="center">
+  Built with ❤️ by the SKanban Team.
+</p>
